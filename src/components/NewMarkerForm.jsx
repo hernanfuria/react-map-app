@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const NewMarkerForm = ({lat, lng, markers, setMarkers, setMapClicked}) => {
+export const NewMarkerForm = ({lat, lng, markers, setMarkers, setMapClicked, lastMarkerIndex, setLastMarkerIndex}) => {
     const [markerName, setMarkerName] = useState('');
     const [markerDesc, setMarkerDesc] = useState('');
 
@@ -16,12 +16,14 @@ export const NewMarkerForm = ({lat, lng, markers, setMarkers, setMapClicked}) =>
         event.preventDefault();
         console.log('handleAddMarker!')
         setMarkers([...markers, {
+            id: lastMarkerIndex,
             lat: lat,
             lng: lng,
             name: markerName,
             desc: markerDesc,
         }]);
         setMapClicked(false);
+        setLastMarkerIndex(lastMarkerIndex + 1);
     }
 
     return (

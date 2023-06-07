@@ -1,15 +1,12 @@
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet'
 import { NewMarkerForm } from './NewMarkerForm';
+import { PopupContent } from './PopupContent'; 
 import { useState } from 'react';
 
 
 const MapEvents = ({setMapClicked, setLatLang}) => {
     useMapEvents({
     click(e) {
-        // setState your coords here
-        // coords exist in "e.latlng.lat" and "e.latlng.lng"
-        console.log(e.latlng.lat);
-        console.log(e.latlng.lng);
         setMapClicked(true);
         setLatLang({lat: e.latlng.lat, lng: e.latlng.lng});
     },
@@ -17,18 +14,26 @@ const MapEvents = ({setMapClicked, setLatLang}) => {
     return false;
 }
 
-const getPopup = ({lat, lng, markers, setMarkers, setMapClicked}) => {
+const getPopup = ({lat, lng, markers, setMarkers, setMapClicked, lastMarkerIndex, setLastMarkerIndex}) => {
     return (
         <Popup position={[lat, lng]}>
-            <NewMarkerForm lat={lat} lng={lng} markers={markers} setMarkers={setMarkers} setMapClicked={setMapClicked} />
+            <NewMarkerForm 
+                lat={lat} 
+                lng={lng} 
+                markers={markers} 
+                setMarkers={setMarkers} 
+                setMapClicked={setMapClicked}
+                lastMarkerIndex={lastMarkerIndex}
+                setLastMarkerIndex={setLastMarkerIndex} 
+            />
         </Popup>
     )
 }
 
-const getMarker = ({lat, lng, name, desc}) => {
+const getMarker = ({id, lat, lng, name, desc, deleteMarkerByIndex}) => {
     return (
         <Marker 
-            key={`${lat}${lng}`}
+            key={`marker${id}`}
             position={[lat, lng]}
             eventHandlers={{
                 click: (e) => {
@@ -42,7 +47,7 @@ const getMarker = ({lat, lng, name, desc}) => {
             </Tooltip>
 
             <Popup>
-                {name} <br /> {desc}
+                <PopupContent markerName={name} markerDesc={desc} markerIndex={id} deleteMarkerByIndex={deleteMarkerByIndex}/>
             </Popup>
         </Marker>
     )
@@ -52,6 +57,21 @@ export const Map = () => {
     const [mapClicked, setMapClicked] = useState(false);
     const [{lat, lng}, setLatLang] = useState({lat: 0, lng: 0});
     const [markers, setMarkers] = useState([]);
+    const [lastMarkerIndex, setLastMarkerIndex] = useState(0);
+
+    const deleteMarkerByIndex = (index) => {
+        console.log(`borrando marker ${index}`)
+
+        const newMarkers = [];
+        for (const marker of markers) {
+            if (marker.id != index) {
+                newMarkers.push(marker);
+            }
+        }
+        setMapClicked(false);
+        setMarkers(newMarkers);
+        
+    }
 
     return (
         <MapContainer 
@@ -67,11 +87,11 @@ export const Map = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
             />
 
-            {mapClicked && getPopup({lat, lng, markers, setMarkers, setMapClicked})}
+            {mapClicked && getPopup({lat, lng, markers, setMarkers, setMapClicked, lastMarkerIndex, setLastMarkerIndex})}
 
             {
-                markers.map(({lat, lng, name, desc}) => {
-                    return getMarker({lat, lng, name, desc})
+                markers.map(({id, lat, lng, name, desc}) => {
+                    return getMarker({id, lat, lng, name, desc, deleteMarkerByIndex})
                 })
             }
 
