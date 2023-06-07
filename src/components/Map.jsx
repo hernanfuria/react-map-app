@@ -1,7 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMapEvents } from 'react-leaflet'
-import { NewMarkerForm } from './NewMarkerForm';
-import { PopupContent } from './PopupContent'; 
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet' 
 import { useState } from 'react';
+import { CustomMarker } from './CustomMarker';
+import { CustomPopup } from './CustomPopup';
 
 
 const MapEvents = ({setMapClicked, setLatLang}) => {
@@ -14,45 +14,6 @@ const MapEvents = ({setMapClicked, setLatLang}) => {
     return false;
 }
 
-const getPopup = ({lat, lng, markers, setMarkers, setMapClicked, lastMarkerIndex, setLastMarkerIndex}) => {
-    return (
-        <Popup position={[lat, lng]}>
-            <NewMarkerForm 
-                lat={lat} 
-                lng={lng} 
-                markers={markers} 
-                setMarkers={setMarkers} 
-                setMapClicked={setMapClicked}
-                lastMarkerIndex={lastMarkerIndex}
-                setLastMarkerIndex={setLastMarkerIndex} 
-            />
-        </Popup>
-    )
-}
-
-const getMarker = ({id, lat, lng, name, desc, deleteMarkerByIndex}) => {
-    return (
-        <Marker 
-            key={`marker${id}`}
-            position={[lat, lng]}
-            eventHandlers={{
-                click: (e) => {
-                console.log('se apreto el marker!!!');
-                },
-            }}
-            >
-
-            <Tooltip>
-                <span className="tooltip-name">{name}</span>
-            </Tooltip>
-
-            <Popup>
-                <PopupContent markerName={name} markerDesc={desc} markerIndex={id} deleteMarkerByIndex={deleteMarkerByIndex}/>
-            </Popup>
-        </Marker>
-    )
-}
-
 export const Map = () => {
     const [mapClicked, setMapClicked] = useState(false);
     const [{lat, lng}, setLatLang] = useState({lat: 0, lng: 0});
@@ -60,8 +21,6 @@ export const Map = () => {
     const [lastMarkerIndex, setLastMarkerIndex] = useState(0);
 
     const deleteMarkerByIndex = (index) => {
-        console.log(`borrando marker ${index}`)
-
         const newMarkers = [];
         for (const marker of markers) {
             if (marker.id != index) {
@@ -70,13 +29,12 @@ export const Map = () => {
         }
         setMapClicked(false);
         setMarkers(newMarkers);
-        
     }
 
     return (
         <MapContainer 
-            center={[51.505, -0.09]} 
-            zoom={13} 
+            center={[-32.95, -60.66]} 
+            zoom={12} 
             scrollWheelZoom={true} 
             doubleClickZoom={true}
             inertia={true}
@@ -87,11 +45,11 @@ export const Map = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
             />
 
-            {mapClicked && getPopup({lat, lng, markers, setMarkers, setMapClicked, lastMarkerIndex, setLastMarkerIndex})}
+            {mapClicked && CustomPopup({lat, lng, markers, setMarkers, setMapClicked, lastMarkerIndex, setLastMarkerIndex})}
 
             {
                 markers.map(({id, lat, lng, name, desc}) => {
-                    return getMarker({id, lat, lng, name, desc, deleteMarkerByIndex})
+                    return CustomMarker({id, lat, lng, name, desc, deleteMarkerByIndex})
                 })
             }
 
