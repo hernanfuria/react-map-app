@@ -13,7 +13,7 @@ export const CustomMarker = ({id, lat, lng, name, desc, deleteMarkerByIndex}) =>
                 },
             }}
             >
-
+            
             <Tooltip>
                 <span className="tooltip-name">{name}</span>
             </Tooltip>

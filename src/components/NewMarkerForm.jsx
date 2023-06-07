@@ -28,32 +28,38 @@ export const NewMarkerForm = ({lat, lng, markers, setMarkers, setMapClicked, las
 
     return (
       <>
-            <form className="form-example" onSubmit={handleAddMarker}>
-                <span className="form-title">New marker</span>
+            <form className="new-marker-form" onSubmit={handleAddMarker}>
+                <span className="form-title">Nuevo marcador</span>
                 <br />
 
-                <div className="form-example">
-                    <label htmlFor="name">Enter marker name: </label>
+                <div className="form-line">
+                    <label htmlFor="name">Nombre</label>
                     <input 
                         type="text" 
                         name="name" 
                         id="name" 
+                        className="marker-name"
+                        placeholder="Restaurant Don Fulano"
                         onChange={(event) => handleMarkerNameChange(event)} 
                         required 
                     />
                 </div>
-                <div className="form-example">
-                    <label htmlFor="name">Enter marker description: </label>
-                    <input 
-                        type="text" 
+                <div className="form-line">
+                    <label htmlFor="name">Descripción</label>
+                    <textarea 
+                        type="text"
+                        cols={50}
+                        rows={50} 
                         name="name" 
                         id="name" 
+                        className="marker-desc"
+                        placeholder="En este restaurant se sirven las mejores papas que probe"
                         onChange={(event) => handleMarkerDescChange(event)}
                         required 
                     />
                 </div>
-                <div className="form-example">
-                    <input type="submit" value="Add marker" />
+                <div className="form-submit">
+                    <input type="submit" value="Añadir marcador" />
                 </div>
             </form>
       </>
